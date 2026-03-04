@@ -1,0 +1,123 @@
+
+
+📌 Proyecto: Red Social de Aficiones
+🎯 Objetivo
+
+Mini red social temática donde los usuarios pueden:
+
+Compartir publicaciones (texto + imagen)
+
+Seguir a otros usuarios
+
+Ver un muro con publicaciones de personas que siguen
+
+Dar likes y comentar
+
+Se desplegará en
+Render
+Usaremos SQLite (sí se puede en Render si usamos disco persistente).
+
+🏗 Arquitectura del Proyecto
+1️⃣ Modelos
+👤 User
+
+Usaremos el User por defecto de Django.
+
+👤 Profile
+
+Extiende al usuario:
+
+user (OneToOne)
+
+bio
+
+profile_picture
+
+created_at
+
+📝 Post
+
+author (ForeignKey User)
+
+content (TextField)
+
+image (ImageField)
+
+created_at
+
+updated_at
+
+💬 Comment
+
+post (ForeignKey Post)
+
+author (ForeignKey User)
+
+content
+
+created_at
+
+❤️ Like
+
+post (ForeignKey)
+
+user (ForeignKey)
+
+created_at
+
+(Con unique constraint para que no pueda dar like 2 veces)
+
+👥 Follow
+
+follower (User)
+
+following (User)
+
+created_at
+
+(Unique constraint para evitar duplicados)
+
+🚀 Funcionalidades Clave
+🔐 Autenticación
+
+Registro
+
+Login
+
+Logout
+
+📝 Publicaciones
+
+Crear post con texto + imagen
+
+Editar (solo autor)
+
+Eliminar (solo autor)
+
+❤️ Likes
+
+Botón de like
+
+Contador dinámico
+
+💬 Comentarios
+
+Crear comentario
+
+Ver comentarios debajo del post
+
+👥 Sistema de Follow
+
+Seguir usuario
+
+Dejar de seguir
+
+Botón dinámico
+
+📰 Muro Inteligente
+
+Feed principal muestra:
+
+Publicaciones de usuarios que sigo
+
+Ordenadas por fecha
