@@ -17,6 +17,7 @@ class Profile(models.Model):
 
 # Señal para crear el perfil automáticamente
 @receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
+def create_or_update_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.get_or_create(user=instance)
+        Profile.objects.create(user=instance)
+    instance.profile.save()
