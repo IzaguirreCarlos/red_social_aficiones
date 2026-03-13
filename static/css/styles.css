@@ -1,0 +1,82 @@
+/* NAVBAR */
+
+.navbar {
+    background: #222;
+    padding: 10px;
+}
+
+.navbar a {
+    color: white;
+    margin-right: 15px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    color: #00bcd4;
+}
+
+.navbar-user {
+    color: white;
+}
+
+.logout {
+    color: red;
+    margin-left: 15px;
+}
+
+/* CONTENT */
+
+
+
+
+
+
+
+/* FOOTER */
+
+.footer {
+    background: #111;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+
+
+/* FEED */
+
+.feed-title {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.feed-container {
+    width: 600px;
+    margin: auto;
+}
+
+.post-card {
+    background: #f4f4f4;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.post-author {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.post-content {
+    margin-bottom: 10px;
+}
+
+.post-image img {
+    width: 100%;
+    border-radius: 6px;
+}
+
+.no-posts {
+    text-align: center;
+}

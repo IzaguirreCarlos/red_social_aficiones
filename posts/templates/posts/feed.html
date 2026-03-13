@@ -1,12 +1,39 @@
-<h1>Feed</h1>
+{% extends "base.html" %}
+
+{% block title %}Feed{% endblock %}
+
+{% block content %}
+
+<h1 class="feed-title">Feed</h1>
+
+<div class="feed-container">
+
 {% for post in posts %}
-<div>
-    <strong>{{ post.author.username }}</strong>
-    <p>{{ post.content }}</p>
+
+<div class="post-card">
+
+    <div class="post-author">
+        <strong>{{ post.author.username }}</strong>
+    </div>
+
+    <div class="post-content">
+        <p>{{ post.content }}</p>
+    </div>
+
     {% if post.image %}
-        <img src="{{ post.image.url }}" width="200">
+    <div class="post-image">
+        <img src="{{ post.image.url }}" alt="post image">
+    </div>
     {% endif %}
+
 </div>
+
 {% empty %}
-<p>No hay posts aún.</p>
+
+<p class="no-posts">No hay posts aún.</p>
+
 {% endfor %}
+
+</div>
+
+{% endblock %}
