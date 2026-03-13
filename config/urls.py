@@ -16,8 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from posts.views import feed  # Importa la vista del feed
+
 
 urlpatterns = [
+    path('', feed, name='feed'),  # <-- ruta principal del feed
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
+    path('posts/', include('posts.urls')),
+
 ]

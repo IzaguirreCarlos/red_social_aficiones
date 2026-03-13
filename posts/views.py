@@ -52,3 +52,19 @@ def feed(request):
     # Posts de usuarios seguidos
     posts = Post.objects.filter(author__in=following_ids).order_by('-created_at')
     return render(request, 'posts/feed.html', {'posts': posts})
+
+
+
+
+@login_required
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('posts:feed')
+    else:
+        form = PostForm()
+    return render(request, 'posts/create_post.html', {'form': form})

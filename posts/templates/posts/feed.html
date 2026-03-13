@@ -1,0 +1,12 @@
+<h1>Feed</h1>
+{% for post in posts %}
+<div>
+    <strong>{{ post.author.username }}</strong>
+    <p>{{ post.content }}</p>
+    {% if post.image %}
+        <img src="{{ post.image.url }}" width="200">
+    {% endif %}
+</div>
+{% empty %}
+<p>No hay posts aún.</p>
+{% endfor %}

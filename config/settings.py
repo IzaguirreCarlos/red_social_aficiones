@@ -19,6 +19,7 @@ load_dotenv() # Carga las variables desde el archivo .env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATES_DIR = BASE_DIR / "config" / "templates"
 
 
 # Quick-start development settings - unsuitable for production
@@ -80,10 +81,11 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'config.urls'
 
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # <-- aquí apunta a tu carpeta templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -94,6 +96,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -157,3 +160,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+LOGOUT_REDIRECT_URL = 'home'

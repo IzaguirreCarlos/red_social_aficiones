@@ -1,7 +1,8 @@
 
 from django.urls import path
-from .views import create_post, follow_user, unfollow_user
-from .views import feed
+from .views import create_post, follow_user, unfollow_user 
+from .views import feed # Importa la vista del feed
+
 
 app_name = 'posts'
 
@@ -10,4 +11,5 @@ urlpatterns = [
     path('follow/<int:user_id>/', follow_user, name='follow'),
     path('unfollow/<int:user_id>/', unfollow_user, name='unfollow'),
     path('', feed, name='feed'),
+
 ]

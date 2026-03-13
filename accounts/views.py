@@ -17,6 +17,11 @@ def register_view(request):
         form = UserRegisterForm()
     return render(request, 'accounts/register.html', {'form': form})
 
+
+
+
+
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -28,6 +33,12 @@ def login_view(request):
         else:
             messages.error(request, "Usuario o contraseña incorrectos")
     return render(request, 'accounts/login.html')
+
+
+
+
+
+
 
 def logout_view(request):
     logout(request)
