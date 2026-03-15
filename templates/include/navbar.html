@@ -1,0 +1,21 @@
+<nav class="navbar">
+
+```
+<div class="navbar-left">
+    <a href="/">Inicio</a>
+    <a href="/feed/">Feed</a>
+    <a href="/posts/create/">Publicar</a>
+</div>
+
+<div class="navbar-right">
+    {% if user.is_authenticated %}
+        <span class="navbar-user">Hola {{ user.username }}</span>
+        <a href="{% url 'accounts:logout' %}" class="logout">Logout</a>
+    {% else %}
+        <a href="{% url 'accounts:login' %}">Login</a>
+        <a href="{% url 'accounts:register' %}">Registro</a>
+    {% endif %}
+</div>
+```
+
+</nav>
