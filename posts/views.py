@@ -47,11 +47,19 @@ def unfollow_user(request, user_id):
 
 @login_required
 def feed(request):
-    # Lista de usuarios que sigo
-    following_ids = Follow.objects.filter(follower=request.user).values_list('following_id', flat=True)
-    # Posts de usuarios seguidos
-    posts = Post.objects.filter(author__in=following_ids).order_by('-created_at')
+
+    # Usuarios que sigo
+    following_ids = Follow.objects.filter(
+        follower=request.user
+    ).values_list('following_id', flat=True)
+
+    # Posts de usuarios seguidos + mis propios posts
+    posts = Post.objects.filter(
+        Q(author__in=following_ids) | Q(author=request.user)
+    ).order_by('-created_at')
+
     return render(request, 'posts/feed.html', {'posts': posts})
+
 
 
 
@@ -68,3 +76,36 @@ def create_post(request):
     else:
         form = PostForm()
     return render(request, 'posts/create_post.html', {'form': form})
+
+
+
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+from .models import Post, Like
+
+
+@login_required
+@require_POST
+def like_post(request, post_id):
+
+    post = get_object_or_404(Post, id=post_id)
+
+    like, created = Like.objects.get_or_create(
+        user=request.user,
+        post=post
+    )
+
+    if not created:
+        like.delete()
+        liked = False
+    else:
+        liked = True
+
+    likes_count = post.likes.count()
+
+    return JsonResponse({
+        'liked': liked,
+        'likes_count': likes_count
+    })
