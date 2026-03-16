@@ -174,16 +174,20 @@ USE_TZ = True
 
 
 
+# settings.py
+
 STATIC_URL = '/static/'
 
+# Esto le dice a Django dónde buscar los archivos estáticos en tu proyecto
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+# Esto es donde WhiteNoise guardará todo para producción
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Forzar el uso de WhiteNoise para servir archivos
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 
 
 
