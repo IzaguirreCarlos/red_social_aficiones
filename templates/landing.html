@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aficiones · Comparte lo que te apasiona</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="landing-body">
+
+    {# === Capa de video de fondo === #}
+    <div class="video-bg">
+        <video autoplay muted loop playsinline preload="auto" poster="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1920&q=70">
+            {# Fuente principal: CDN público (Coverr - libre uso) #}
+            <source src="https://cdn.coverr.co/videos/coverr-people-typing-on-a-laptop-1572/1080p.mp4" type="video/mp4">
+            {# Fallback alterno #}
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-set-of-plateaus-seen-from-the-heights-in-a-sunset-32809-large.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    {# === Navbar transparente sobre el video === #}
+    <nav class="navbar navbar-on-video">
+        <div class="navbar-left">
+            <a href="{% url 'landing' %}" class="navbar-brand">Aficiones</a>
+        </div>
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+                <a href="{% url 'posts:feed' %}">Muro</a>
+                <a href="{% url 'accounts:logout' %}" class="logout">Salir</a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}">Iniciar sesión</a>
+                <a href="{% url 'accounts:register' %}" class="btn-primary-sm">Crear cuenta</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {# === Hero === #}
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Comparte lo que te apasiona</h1>
+            <p class="hero-subtitle">
+                Una mini red social temática para conectar con personas que aman lo mismo que tú.
+                Publica, sigue, comenta y descubre nuevas aficiones.
+            </p>
+
+            <div class="hero-cta">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'posts:feed' %}" class="btn btn-primary">Ir al muro</a>
+                    <a href="{% url 'posts:create_post' %}" class="btn btn-ghost">Publicar algo</a>
+                {% else %}
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary">Crear cuenta gratis</a>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-ghost">Ya tengo cuenta</a>
+                {% endif %}
+            </div>
+
+            <div class="hero-features">
+                <div class="hero-feature">
+                    <span class="hero-feature-icon">📝</span>
+                    <strong>Publicaciones</strong>
+                    <small>Texto + imagen</small>
+                </div>
+                <div class="hero-feature">
+                    <span class="hero-feature-icon">❤️</span>
+                    <strong>Likes</strong>
+                    <small>Reacciona en tiempo real</small>
+                </div>
+                <div class="hero-feature">
+                    <span class="hero-feature-icon">👥</span>
+                    <strong>Sigue gente</strong>
+                    <small>Construye tu muro</small>
+                </div>
+                <div class="hero-feature">
+                    <span class="hero-feature-icon">💬</span>
+                    <strong>Comenta</strong>
+                    <small>Conversa sobre lo que amas</small>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <footer class="landing-footer">
+        © 2026 Red Social de Aficiones · Proyecto Django
+    </footer>
+
+</body>
+</html>

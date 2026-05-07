@@ -1,35 +1,25 @@
 """
 URL configuration for config project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
 from django.urls import path, include
-from posts.views import feed  # Importa la vista del feed
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 
 urlpatterns = [
-    path('', feed, name='feed'),  # <-- ruta principal del feed
+    # Landing pública (con video de fondo). Si el usuario está logueado,
+    # la propia vista del feed sigue siendo accesible en /feed/
+    path('', TemplateView.as_view(template_name='landing.html'), name='landing'),
+
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
-    path('posts/', include('posts.urls')),
-    
+    path('posts/', include('posts.urls')),  # incluye /posts/feed/, etc.
 ]
 
 
-# Añade esto al final:
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL or '/media/',
+                          document_root=getattr(settings, 'MEDIA_ROOT', ''))

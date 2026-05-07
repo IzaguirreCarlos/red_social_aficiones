@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión · Aficiones</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="auth-body">
+
+    <div class="video-bg">
+        <video autoplay muted loop playsinline preload="auto"
+               poster="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1920&q=70">
+            <source src="https://cdn.coverr.co/videos/coverr-people-typing-on-a-laptop-1572/1080p.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="auth-shell">
+        <a href="{% url 'landing' %}" class="auth-brand">Aficiones</a>
+
+        <div class="auth-card">
+            <h1>Iniciar sesión</h1>
+            <p class="auth-sub">Bienvenido de vuelta. Continúa explorando tu comunidad.</p>
+
+            {% if messages %}
+                <ul class="auth-messages">
+                    {% for message in messages %}
+                        <li class="auth-msg auth-msg-{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+
+                <label for="id_username">Usuario</label>
+                <input id="id_username" type="text" name="username" required autofocus autocomplete="username">
+
+                <label for="id_password">Contraseña</label>
+                <input id="id_password" type="password" name="password" required autocomplete="current-password">
+
+                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+            </form>
+
+            <p class="auth-foot">
+                ¿No tienes cuenta?
+                <a href="{% url 'accounts:register' %}">Crear cuenta</a>
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>

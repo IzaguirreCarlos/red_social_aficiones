@@ -1,48 +1,25 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Feed{% endblock %}
+{% block title %}Muro · Aficiones{% endblock %}
 
 {% block content %}
 
-<h1 class="feed-title">Feed</h1>
+<h1 class="feed-title">Tu muro</h1>
 
 <div class="feed-container">
 
-{% for post in posts %}
-
-<div class="post-card">
-
-    <div class="post-header">
-        <span class="post-author">{{ post.author.username }}</span>
-        <span class="post-date">{{ post.created_at|date:"M d, Y • H:i" }}</span>
+    <div id="post-list">
+        {% include 'posts/_post_list.html' with posts=posts comment_form=comment_form %}
     </div>
 
-    <div class="post-content">
-        <p>{{ post.content }}</p>
-    </div>
-
-    {% if post.image %}
-    <div class="post-image">
-        <img src="{{ post.image.url }}" alt="Imagen del post">
-    </div>
+    {% if has_next %}
+        <div class="feed-loader" id="feed-loader"
+             data-next="{{ next_page }}"
+             data-url="{% url 'posts:feed_load_more' %}">
+            <button id="load-more-btn" class="btn btn-ghost">Cargar más</button>
+        </div>
     {% endif %}
-
-   <div class="post-actions">
-
- <button class="like-btn" data-id="{{ post.id }}">
-❤️ <span id="likes-count-{{ post.id }}">
-     {{ post.likes.count }}
-   </span> Likes
- </button>
-
-</div>
-</div>
-
-{% empty %}
-
-<p class="no-posts">No hay posts aún.</p>
-
-{% endfor %}
 
 </div>
 

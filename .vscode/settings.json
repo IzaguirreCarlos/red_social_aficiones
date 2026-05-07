@@ -1,0 +1,5 @@
+{
+  "claudeDevTools.authMode": "auto",
+  "claudeDevTools.accountPool.enabled": false,
+  "claudeDevTools.wakeup.enabled": false
+}

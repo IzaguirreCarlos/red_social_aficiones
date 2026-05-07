@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta · Aficiones</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="auth-body">
+
+    <div class="video-bg">
+        <video autoplay muted loop playsinline preload="auto"
+               poster="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1920&q=70">
+            <source src="https://cdn.coverr.co/videos/coverr-people-typing-on-a-laptop-1572/1080p.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="auth-shell">
+        <a href="{% url 'landing' %}" class="auth-brand">Aficiones</a>
+
+        <div class="auth-card">
+            <h1>Crear cuenta</h1>
+            <p class="auth-sub">Únete a la comunidad y comparte lo que te apasiona.</p>
+
+            {% if messages %}
+                <ul class="auth-messages">
+                    {% for message in messages %}
+                        <li class="auth-msg auth-msg-{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="field-help">{{ field.help_text|safe }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="field-errors">
+                            {% for err in field.errors %}<span>{{ err }}</span>{% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
+            </form>
+
+            <p class="auth-foot">
+                ¿Ya tienes cuenta?
+                <a href="{% url 'accounts:login' %}">Iniciar sesión</a>
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,38 +1,38 @@
 <footer class="footer">
+    <div class="footer-container">
 
-```
-<div class="footer-container">
+        <div class="footer-column">
+            <h3>Red Social de Aficiones</h3>
+            <p>Comparte tus intereses, descubre nuevas pasiones y conecta con personas que aman lo mismo que tú.</p>
+        </div>
 
-    <div class="footer-column">
-        <h3>Red Social de Aficiones</h3>
-        <p>Comparte tus intereses, descubre nuevas pasiones y conecta con personas que aman lo mismo que tú.</p>
+        <div class="footer-column">
+            <h4>Explorar</h4>
+            <ul>
+                <li><a href="{% url 'landing' %}">Inicio</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'posts:feed' %}">Muro</a></li>
+                    <li><a href="{% url 'posts:create_post' %}">Publicar</a></li>
+                    <li><a href="{% url 'posts:explore' %}">Explorar usuarios</a></li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}">Iniciar sesión</a></li>
+                    <li><a href="{% url 'accounts:register' %}">Crear cuenta</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h4>Comunidad</h4>
+            <ul>
+                <li><a href="#">Sobre nosotros</a></li>
+                <li><a href="#">Contacto</a></li>
+                <li><a href="#">Privacidad</a></li>
+            </ul>
+        </div>
+
     </div>
 
-    <div class="footer-column">
-        <h4>Explorar</h4>
-        <ul>
-            <li><a href="/">Inicio</a></li>
-            <li><a href="/feed/">Feed</a></li>
-            <li><a href="/posts/create/">Publicar</a></li>
-        </ul>
+    <div class="footer-bottom">
+        <p>© 2026 Red Social de Aficiones · Proyecto Django</p>
     </div>
-
-    <div class="footer-column">
-        <h4>Comunidad</h4>
-        <ul>
-            <li><a href="#">Sobre nosotros</a></li>
-            <li><a href="#">Contacto</a></li>
-            <li><a href="#">Privacidad</a></li>
-        </ul>
-    </div>
-
-</div>
-
-<div class="footer-bottom">
-    <p>© 2026 Red Social de Aficiones • Proyecto Django</p>
-</div>
-```
-
 </footer>
-
-

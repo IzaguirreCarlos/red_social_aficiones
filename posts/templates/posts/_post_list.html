@@ -1,0 +1,51 @@
+{% for post in posts %}
+<article class="post-card" data-post-id="{{ post.id }}">
+
+    <div class="post-header">
+        <span class="post-author">{{ post.author.username }}</span>
+        <span class="post-date">{{ post.created_at|date:"M d, Y · H:i" }}</span>
+    </div>
+
+    <div class="post-content">
+        <p>{{ post.content|linebreaksbr }}</p>
+    </div>
+
+    {% if post.image %}
+    <div class="post-image">
+        <img src="{{ post.image.url }}" alt="Imagen del post" loading="lazy">
+    </div>
+    {% endif %}
+
+    <div class="post-actions">
+        <button class="like-btn {% if post.liked_by_me %}is-liked{% endif %}" data-id="{{ post.id }}" type="button">
+            <span class="like-icon">{% if post.liked_by_me %}❤️{% else %}🤍{% endif %}</span>
+            <span id="likes-count-{{ post.id }}">{{ post.likes_count }}</span>
+        </button>
+
+        <button class="comment-toggle" data-id="{{ post.id }}" type="button">
+            💬 <span id="comments-count-{{ post.id }}">{{ post.comments_count }}</span>
+        </button>
+    </div>
+
+    <div class="comments-section" id="comments-section-{{ post.id }}" hidden>
+        <ul class="comments-list" id="comments-list-{{ post.id }}">
+            {% for c in post.comments.all %}
+                <li class="comment-item">
+                    <strong>{{ c.author.username }}</strong>
+                    <span class="comment-content">{{ c.content }}</span>
+                    <small class="comment-date">{{ c.created_at|date:"d M Y · H:i" }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <form class="comment-form" data-post-id="{{ post.id }}">
+            {% csrf_token %}
+            {{ comment_form.content }}
+            <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
+        </form>
+    </div>
+
+</article>
+{% empty %}
+    <p class="no-posts">No hay publicaciones aún. ¡Sigue a alguien o crea la primera!</p>
+{% endfor %}

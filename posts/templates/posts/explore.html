@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Explorar usuarios · Aficiones{% endblock %}
+
+{% block content %}
+
+<h1 class="feed-title">Explorar personas</h1>
+
+<div class="explore-grid">
+    {% for u in users %}
+        <article class="user-card" data-user-id="{{ u.id }}">
+            <div class="user-card-head">
+                <div class="user-avatar">{{ u.username|slice:":1"|upper }}</div>
+                <div>
+                    <div class="user-username">{{ u.username }}</div>
+                    <div class="user-meta">
+                        <span id="followers-count-{{ u.id }}">{{ u.followers_count }}</span> seguidores
+                    </div>
+                </div>
+            </div>
+
+            {% if u.profile.bio %}
+                <p class="user-bio">{{ u.profile.bio|truncatechars:120 }}</p>
+            {% endif %}
+
+            <button class="follow-btn {% if u.is_following %}is-following{% endif %}"
+                    data-user-id="{{ u.id }}"
+                    data-following="{{ u.is_following|yesno:'1,0' }}"
+                    type="button">
+                {% if u.is_following %}Siguiendo{% else %}Seguir{% endif %}
+            </button>
+        </article>
+    {% empty %}
+        <p class="no-posts">Aún no hay otros usuarios para mostrar.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

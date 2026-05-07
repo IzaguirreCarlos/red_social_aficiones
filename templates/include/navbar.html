@@ -1,17 +1,22 @@
+{% load static %}
 <nav class="navbar">
 
     <div class="navbar-left">
-        <a href="{% url 'feed' %}">Inicio</a>
-        <a href="/posts/create/">Publicar</a>
+        <a href="{% url 'landing' %}" class="navbar-brand">Aficiones</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'posts:feed' %}">Muro</a>
+            <a href="{% url 'posts:create_post' %}">Publicar</a>
+            <a href="{% url 'posts:explore' %}">Explorar</a>
+        {% endif %}
     </div>
 
     <div class="navbar-right">
         {% if user.is_authenticated %}
-            <span class="navbar-user">Hola {{ user.username }}</span>
-            <a href="{% url 'accounts:logout' %}" class="logout">Logout</a>
+            <span class="navbar-user">Hola, {{ user.username }}</span>
+            <a href="{% url 'accounts:logout' %}" class="logout">Salir</a>
         {% else %}
-            <a href="{% url 'accounts:login' %}">Login</a>
-            <a href="{% url 'accounts:register' %}">Registro</a>
+            <a href="{% url 'accounts:login' %}">Iniciar sesión</a>
+            <a href="{% url 'accounts:register' %}" class="btn-primary-sm">Crear cuenta</a>
         {% endif %}
     </div>
 
