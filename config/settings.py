@@ -36,12 +36,16 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 DEBUG = 'VERCEL' not in os.environ
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS += [".vercel.app"]
 
 VERCEL_URL = os.environ.get('VERCEL_URL')
 if VERCEL_URL:
     ALLOWED_HOSTS.append(VERCEL_URL)
 
-CSRF_TRUSTED_ORIGINS = [f"https://{h}" for h in ALLOWED_HOSTS if h not in ("localhost", "127.0.0.1")]
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.vercel.app",
+    *[f"https://{h}" for h in ALLOWED_HOSTS if h not in ("localhost", "127.0.0.1", ".vercel.app")],
+]
 
 # Application definition
 
