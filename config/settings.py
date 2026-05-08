@@ -33,23 +33,15 @@ TEMPLATES_DIR = BASE_DIR /"config"/ "templates"
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 
-import os
+DEBUG = 'VERCEL' not in os.environ
 
-# Si 'RENDER' existe en el sistema, estamos en producción (False)
-# Si no existe, estamos en local (True)
-if 'RENDER' in os.environ:
-    DEBUG = False
-else:
-    DEBUG = True
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
-# Opcional: Si prefieres forzarlo desde el .env, usa esta línea en su lugar:
-# DEBUG = os.environ.get("DEBUG", "False") == "True"
+VERCEL_URL = os.environ.get('VERCEL_URL')
+if VERCEL_URL:
+    ALLOWED_HOSTS.append(VERCEL_URL)
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
-
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+CSRF_TRUSTED_ORIGINS = [f"https://{h}" for h in ALLOWED_HOSTS if h not in ("localhost", "127.0.0.1")]
 
 # Application definition
 
@@ -149,7 +141,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
