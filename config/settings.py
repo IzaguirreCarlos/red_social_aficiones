@@ -154,6 +154,21 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
 
 
+# ---------- SESIONES ----------
+# La cookie sobrevive al cierre del navegador (no es session-only)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# Duración de la sesión: 30 días
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # segundos
+
+# Cada request renueva la expiración (rolling session)
+SESSION_SAVE_EVERY_REQUEST = True
+
+# La cookie va por todo el sitio
+SESSION_COOKIE_PATH = '/'
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
