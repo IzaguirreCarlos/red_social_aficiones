@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notificaciones · Aficiones{% endblock %}
+
+{% block content %}
+
+<h1 class="feed-title">Notificaciones</h1>
+
+<ul class="notification-list">
+    {% for n in notifications %}
+        <li class="notification-item {% if not n.is_read %}is-unread{% endif %}">
+            <div class="notification-avatar">{{ n.sender.username|slice:":1"|upper }}</div>
+            <div class="notification-body">
+                <p class="notification-text">
+                    <strong>{{ n.sender.username }}</strong>
+                    {{ n.verb }}
+                </p>
+                {% if n.post %}
+                    <p class="notification-snippet">"{{ n.post.content|truncatechars:80 }}"</p>
+                {% endif %}
+                <small class="notification-date">{{ n.created_at|date:"d M Y · H:i" }}</small>
+            </div>
+        </li>
+    {% empty %}
+        <li class="no-posts">Aún no tienes notificaciones.</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

@@ -12,6 +12,10 @@
 
     <div class="navbar-right">
         {% if user.is_authenticated %}
+            <a href="{% url 'posts:notifications' %}" class="bell" id="bell" aria-label="Notificaciones">
+                <span class="bell-icon">🔔</span>
+                <span class="bell-badge" id="bell-badge" hidden>0</span>
+            </a>
             <span class="navbar-user">Hola, {{ user.username }}</span>
             <a href="{% url 'accounts:logout' %}" class="logout">Salir</a>
         {% else %}

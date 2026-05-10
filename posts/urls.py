@@ -19,4 +19,8 @@ urlpatterns = [
     path('explore/', views.explore_users, name='explore'),
     path('follow/<int:user_id>/', views.follow_user, name='follow'),
     path('unfollow/<int:user_id>/', views.unfollow_user, name='unfollow'),
+
+    # Notificaciones
+    path('notifications/', views.notifications_list, name='notifications'),
+    path('notifications/count/', views.notifications_count, name='notifications_count'),
 ]

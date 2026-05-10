@@ -410,3 +410,88 @@ a:hover { color: var(--accent-hover); text-decoration: underline; text-underline
     .container { margin: 24px auto; }
     .auth-card { padding: 32px 24px; }
 }
+
+/* ---------- NOTIFICACIONES ---------- */
+.bell {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background .15s;
+}
+.bell:hover { background: var(--cream-2); text-decoration: none; }
+.bell.has-unread .bell-icon { animation: bell-shake .5s ease-in-out; }
+.bell-icon { font-size: 18px; line-height: 1; }
+.bell-badge {
+    position: absolute;
+    top: 2px; right: 2px;
+    min-width: 18px; height: 18px;
+    padding: 0 5px;
+    background: var(--accent);
+    color: var(--paper);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    border: 2px solid var(--cream);
+}
+@keyframes bell-shake {
+    0%, 100% { transform: rotate(0); }
+    20%      { transform: rotate(-12deg); }
+    40%      { transform: rotate( 12deg); }
+    60%      { transform: rotate(-8deg); }
+    80%      { transform: rotate( 6deg); }
+}
+
+.notification-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 660px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.notification-item {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: border-color .15s;
+}
+.notification-item:hover { border-color: rgba(20,20,19,.16); }
+.notification-item.is-unread {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+}
+.notification-avatar {
+    flex: 0 0 40px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 16px;
+}
+.notification-body { flex: 1; min-width: 0; }
+.notification-text { margin: 0 0 4px; font-size: 14px; color: var(--ink); line-height: 1.4; }
+.notification-text strong { font-family: var(--serif); margin-right: 2px; }
+.notification-snippet {
+    margin: 4px 0;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.notification-date { color: var(--muted); font-size: 11px; }

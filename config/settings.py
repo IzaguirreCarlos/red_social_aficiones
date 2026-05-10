@@ -33,19 +33,23 @@ TEMPLATES_DIR = BASE_DIR /"config"/ "templates"
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 
-DEBUG = 'VERCEL' not in os.environ
+import os
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
-ALLOWED_HOSTS += [".vercel.app"]
+# Si 'RENDER' existe en el sistema, estamos en producción (False)
+# Si no existe, estamos en local (True)
+if 'RENDER' in os.environ:
+    DEBUG = False
+else:
+    DEBUG = True
 
-VERCEL_URL = os.environ.get('VERCEL_URL')
-if VERCEL_URL:
-    ALLOWED_HOSTS.append(VERCEL_URL)
+# Opcional: Si prefieres forzarlo desde el .env, usa esta línea en su lugar:
+# DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.vercel.app",
-    *[f"https://{h}" for h in ALLOWED_HOSTS if h not in ("localhost", "127.0.0.1", ".vercel.app")],
-]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 
@@ -145,6 +149,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 if not DEBUG:
+    SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
@@ -181,7 +186,8 @@ STATICFILES_DIRS = [
 # Esto es donde WhiteNoise guardará todo para producción
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+# Forzar el uso de WhiteNoise para servir archivos
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 

@@ -1,6 +1,6 @@
 /* ============================================================
    App JS — Red Social de Aficiones
-   Likes, comentarios, follow/unfollow, infinite-scroll del feed
+   Likes, comentarios, follow/unfollow, infinite-scroll, notifs
    ============================================================ */
 
 (function () {
@@ -33,7 +33,6 @@
     document.addEventListener("click", function (e) {
         const btn = e.target.closest(".like-btn");
         if (!btn) return;
-
         const id = btn.dataset.id;
         postJSON(`/posts/like/${id}/`).then(({ json }) => {
             if (typeof json.likes_count === "undefined") return;
@@ -45,7 +44,7 @@
         });
     });
 
-    /* ---------- COMENTARIOS: toggle ---------- */
+    /* ---------- COMENTARIOS ---------- */
     document.addEventListener("click", function (e) {
         const tog = e.target.closest(".comment-toggle");
         if (!tog) return;
@@ -54,12 +53,10 @@
         if (section) section.hidden = !section.hidden;
     });
 
-    /* ---------- COMENTARIOS: submit ---------- */
     document.addEventListener("submit", function (e) {
         const form = e.target.closest(".comment-form");
         if (!form) return;
         e.preventDefault();
-
         const postId = form.dataset.postId;
         const input = form.querySelector('input[name="content"], textarea[name="content"]');
         const value = (input && input.value || "").trim();
@@ -67,7 +64,6 @@
 
         postJSON(`/posts/comment/${postId}/`, { content: value }).then(({ ok, json }) => {
             if (!ok || !json.ok) return;
-
             const list = document.getElementById(`comments-list-${postId}`);
             if (list) {
                 const li = document.createElement("li");
@@ -78,10 +74,8 @@
                 li.querySelector(".comment-date").textContent = json.comment.created_at;
                 list.appendChild(li);
             }
-
             const counter = document.getElementById(`comments-count-${postId}`);
             if (counter) counter.textContent = json.comments_count;
-
             input.value = "";
         });
     });
@@ -90,22 +84,16 @@
     document.addEventListener("click", function (e) {
         const btn = e.target.closest(".follow-btn");
         if (!btn) return;
-
         const userId = btn.dataset.userId;
         const isFollowing = btn.dataset.following === "1";
-        const url = isFollowing
-            ? `/posts/unfollow/${userId}/`
-            : `/posts/follow/${userId}/`;
-
+        const url = isFollowing ? `/posts/unfollow/${userId}/` : `/posts/follow/${userId}/`;
         btn.disabled = true;
-
         postJSON(url).then(({ ok, json }) => {
             btn.disabled = false;
             if (!ok || !json.ok) return;
             btn.dataset.following = json.following ? "1" : "0";
             btn.classList.toggle("is-following", json.following);
             btn.textContent = json.following ? "Siguiendo" : "Seguir";
-
             const counter = document.getElementById(`followers-count-${userId}`);
             if (counter && typeof json.followers_count !== "undefined") {
                 counter.textContent = json.followers_count;
@@ -113,7 +101,7 @@
         });
     });
 
-    /* ---------- INFINITE SCROLL DEL FEED ---------- */
+    /* ---------- INFINITE SCROLL ---------- */
     const loader = document.getElementById("feed-loader");
     if (loader) {
         const list = document.getElementById("post-list");
@@ -126,7 +114,6 @@
             if (loading || !nextPage) return;
             loading = true;
             btn.textContent = "Cargando...";
-
             getJSON(`${url}?page=${nextPage}`)
                 .then((data) => {
                     if (data.html) list.insertAdjacentHTML("beforeend", data.html);
@@ -137,23 +124,38 @@
                         loader.remove();
                     }
                 })
-                .catch(() => {
-                    btn.textContent = "Reintentar";
-                })
-                .finally(() => {
-                    loading = false;
-                });
+                .catch(() => { btn.textContent = "Reintentar"; })
+                .finally(() => { loading = false; });
         }
 
         btn.addEventListener("click", loadMore);
-
-        // Auto-cargar al hacer scroll cerca del final
         const io = new IntersectionObserver(
-            (entries) => {
-                if (entries.some((en) => en.isIntersecting)) loadMore();
-            },
+            (entries) => { if (entries.some((en) => en.isIntersecting)) loadMore(); },
             { rootMargin: "300px" }
         );
         io.observe(loader);
+    }
+
+    /* ---------- NOTIFICACIONES (polling) ---------- */
+    const bell = document.getElementById("bell");
+    const badge = document.getElementById("bell-badge");
+    if (bell && badge) {
+        function refresh() {
+            getJSON('/posts/notifications/count/')
+                .then((d) => {
+                    const n = d.unread || 0;
+                    if (n > 0) {
+                        badge.textContent = n > 99 ? '99+' : n;
+                        badge.hidden = false;
+                        bell.classList.add("has-unread");
+                    } else {
+                        badge.hidden = true;
+                        bell.classList.remove("has-unread");
+                    }
+                })
+                .catch(() => {});
+        }
+        refresh();
+        setInterval(refresh, 30000); // 30s
     }
 })();

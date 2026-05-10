@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from django.db.models import Q, Count, Exists, OuterRef
 
-from .models import Post, Like, Follow, Comment
+from .models import Post, Like, Follow, Comment, Notification
 from .forms import PostForm, CommentForm
 
 
@@ -17,7 +17,6 @@ POSTS_PER_PAGE = 5
 
 
 def _annotate_posts(qs, user):
-    """Anota likes_count, comments_count y `liked_by_me` para evitar N+1 en plantillas."""
     qs = qs.annotate(
         likes_count=Count('likes', distinct=True),
         comments_count=Count('comments', distinct=True),
@@ -35,43 +34,37 @@ def _feed_queryset(user):
     following_ids = Follow.objects.filter(
         follower=user
     ).values_list('following_id', flat=True)
-
     qs = Post.objects.filter(
         Q(author__in=following_ids) | Q(author=user)
     ).select_related('author').order_by('-created_at')
     return _annotate_posts(qs, user)
 
 
-# ---------- Vistas ----------
+# ---------- Feed ----------
 
 @login_required
 def feed(request):
     qs = _feed_queryset(request.user)
     paginator = Paginator(qs, POSTS_PER_PAGE)
     page = paginator.get_page(1)
-
-    context = {
+    return render(request, 'posts/feed.html', {
         'posts': page.object_list,
         'page_obj': page,
         'has_next': page.has_next(),
         'next_page': page.next_page_number() if page.has_next() else None,
         'comment_form': CommentForm(),
-    }
-    return render(request, 'posts/feed.html', context)
+    })
 
 
 @login_required
 def feed_load_more(request):
-    """Devuelve HTML parcial con la siguiente página de posts (carga asincrónica)."""
     try:
         page_num = int(request.GET.get('page', 2))
     except (TypeError, ValueError):
         return HttpResponseBadRequest('page inválida')
-
     qs = _feed_queryset(request.user)
     paginator = Paginator(qs, POSTS_PER_PAGE)
     page = paginator.get_page(page_num)
-
     html = render_to_string(
         'posts/_post_list.html',
         {'posts': page.object_list, 'comment_form': CommentForm()},
@@ -110,10 +103,7 @@ def like_post(request, post_id):
         liked = False
     else:
         liked = True
-    return JsonResponse({
-        'liked': liked,
-        'likes_count': post.likes.count(),
-    })
+    return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
 
 
 # ---------- Comentarios ----------
@@ -125,12 +115,10 @@ def create_comment(request, post_id):
     form = CommentForm(request.POST)
     if not form.is_valid():
         return JsonResponse({'ok': False, 'errors': form.errors}, status=400)
-
     comment = form.save(commit=False)
     comment.post = post
     comment.author = request.user
     comment.save()
-
     return JsonResponse({
         'ok': True,
         'comment': {
@@ -153,8 +141,7 @@ def follow_user(request, user_id):
     target = get_object_or_404(User, id=user_id)
     Follow.objects.get_or_create(follower=request.user, following=target)
     return JsonResponse({
-        'ok': True,
-        'following': True,
+        'ok': True, 'following': True,
         'followers_count': target.followers.count(),
     })
 
@@ -165,8 +152,7 @@ def unfollow_user(request, user_id):
     target = get_object_or_404(User, id=user_id)
     Follow.objects.filter(follower=request.user, following=target).delete()
     return JsonResponse({
-        'ok': True,
-        'following': False,
+        'ok': True, 'following': False,
         'followers_count': target.followers.count(),
     })
 
@@ -185,5 +171,24 @@ def explore_users(request):
     for u in users:
         u.is_following = u.id in following_ids
         decorated.append(u)
-
     return render(request, 'posts/explore.html', {'users': decorated})
+
+
+# ---------- Notificaciones ----------
+
+@login_required
+def notifications_list(request):
+    """Lista todas las notificaciones del usuario y las marca como leídas."""
+    qs = (request.user.notifications
+          .select_related('sender', 'post')
+          .all()[:50])
+    # Marcamos como leídas las nuevas (en una sola query)
+    request.user.notifications.filter(is_read=False).update(is_read=True)
+    return render(request, 'posts/notifications.html', {'notifications': qs})
+
+
+@login_required
+def notifications_count(request):
+    """Polling AJAX: cuántas notificaciones sin leer tiene el usuario."""
+    n = request.user.notifications.filter(is_read=False).count()
+    return JsonResponse({'unread': n})

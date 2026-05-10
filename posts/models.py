@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
-
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -16,9 +14,8 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.author.username} - {self.created_at}'
-    
 
-# Creando Modelo comentarios
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -27,9 +24,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.author.username}'
-    
 
-#  Creando Modelo LIKE
+
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -42,9 +38,6 @@ class Like(models.Model):
         return f'{self.user.username} likes {self.post.id}'
 
 
-
-# Creando Modelo Follow
-
 class Follow(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
     following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
@@ -55,3 +48,48 @@ class Follow(models.Model):
 
     def __str__(self):
         return f'{self.follower.username} follows {self.following.username}'
+
+
+class Notification(models.Model):
+    """Notificaciones que un usuario recibe.
+    type: like / comment / follow
+    """
+    LIKE    = 'like'
+    COMMENT = 'comment'
+    FOLLOW  = 'follow'
+    TYPE_CHOICES = [
+        (LIKE,    'Like'),
+        (COMMENT, 'Comment'),
+        (FOLLOW,  'Follow'),
+    ]
+
+    recipient = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='notifications'
+    )
+    sender = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='sent_notifications'
+    )
+    notification_type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='notifications'
+    )
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['recipient', 'is_read']),
+        ]
+
+    def __str__(self):
+        return f'{self.notification_type} {self.sender.username} → {self.recipient.username}'
+
+    @property
+    def verb(self):
+        return {
+            self.LIKE:    'le dio like a tu publicación',
+            self.COMMENT: 'comentó tu publicación',
+            self.FOLLOW:  'comenzó a seguirte',
+        }[self.notification_type]
