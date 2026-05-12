@@ -1,0 +1,5 @@
+[project]
+name = "red-social-aficiones"
+version = "0.1.0"
+description = "Mini red social temática (Django) — deploy serverless en Vercel"
+requires-python = ">=3.12,<3.13"
